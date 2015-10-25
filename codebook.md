@@ -35,15 +35,4 @@ This version provides the original raw inertial signals from the smartphone sens
 ###Guide to create the tidy data file
 1.  Download the data https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip
 2.  Unzip the data into folder called data.
-
-###Cleaning of the data
-Short, high-level description of what the cleaning script does. [link to the readme document that describes the code in greater detail]()
-
-##Description of the variables in the tiny_data.txt file
-General description of the file including:
- - Dimensions of the dataset
- - Summary of the data
- - Variables present in the dataset
-
-(you can easily use Rcode for this, just load the dataset and provide the information directly form the tidy data file)
-
+3.  import the run_analysis.R file and run run_analysis method
