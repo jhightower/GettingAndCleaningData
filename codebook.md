@@ -1,38 +1,135 @@
-# Codebook template
-Joshua Hightower  
-10/25/2015  
+Code Book
+========
 
-## Project Description
-The purpose of this project is to demonstrate your ability to collect, work with, and clean a data set. The goal is to prepare tidy data that can be used for later analysis. You will be graded by your peers on a series of yes/no questions related to the project. You will be required to submit: 1) a tidy data set as described below, 2) a link to a Github repository with your script for performing the analysis, and 3) a code book that describes the variables, the data, and any transformations or work that you performed to clean up the data called CodeBook.md. You should also include a README.md in the repo with your scripts. This repo explains how all of the scripts work and how they are connected.  
+Raw data collection
+-------------------
 
-One of the most exciting areas in all of data science right now is wearable computing - see for example this article . Companies like Fitbit, Nike, and Jawbone Up are racing to develop the most advanced algorithms to attract new users. The data linked to from the course website represent data collected from the accelerometers from the Samsung Galaxy S smartphone. A full description is available at the site where the data was obtained: 
+### Collection
 
-http://archive.ics.uci.edu/ml/datasets/Human+Activity+Recognition+Using+Smartphones 
+Raw data are obtained from UCI Machine Learning repository. In particular we used
+the *Human Activity Recognition Using Smartphones Data Set* ,
+that was used by the original collectors to conduct experiments exploiting
+Support Vector Machine (SVM) .
 
-Here are the data for the project: 
+Activity Recognition (AR) aims to recognize the actions and goals of one or more agents
+from a series of observations on the agents' actions and the environmental conditions
+. The collectors used a sensor based approach employing
+smartphones as sensing tools. Smartphones are an effective solution for AR, because
+they come with embedded built-in sensors such as microphones, dual cameras, accelerometers,
+gyroscopes, etc.
 
-https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip 
+The data set was built from experiments carried out with a group of 30 volunteers
+within an age bracket of 19-48 years. Each person performed six activities
+(walking, walking upstairs, walking downstairs, sitting, standing, laying)
+wearing a smartphone (Samsung Galaxy S II) on the waist. Using its embedded
+accelerometer and gyroscope, 3-axial linear acceleration and 3-axial angular velocity
+were captured at a constant rate of 50Hz. The experiments have been video-recorded
+to label the data manually.
 
- You should create one R script called run_analysis.R that does the following. 
-1. Merges the training and the test sets to create one data set.
-2. Extracts only the measurements on the mean and standard deviation for each measurement.
-3. Uses descriptive activity names to name the activities in the data set.
-4. Appropriately labels the data set with descriptive activity names.
-5. Creates a second, independent tidy data set with the average of each variable for each activity and each subject. 
+The obtained data set has been randomly partitioned into two sets, where 70% of
+the volunteers was selected for generating the training data and 30% the test data.
 
-##Study design and data processing
+### Signals
 
-###Collection of the raw data
-The experiments were carried out with a group of 30 volunteers within an age bracket of 19-48 years. They performed a protocol of activities composed of six basic activities: three static postures (standing, sitting, lying) and three dynamic activities (walking, walking downstairs and walking upstairs). The experiment also included postural transitions that occurred between the static postures. These are: stand-to-sit, sit-to-stand, sit-to-lie, lie-to-sit, stand-to-lie, and lie-to-stand. All the participants were wearing a smartphone (Samsung Galaxy S II) on the waist during the experiment execution. We captured 3-axial linear acceleration and 3-axial angular velocity at a constant rate of 50Hz using the embedded accelerometer and gyroscope of the device. The experiments were video-recorded to label the data manually. The obtained dataset was randomly partitioned into two sets, where 70% of the volunteers was selected for generating the training data and 30% the test data. 
+The 3-axial time domain signals from accelerometer and gyroscope
+were captured at a constant rate of 50 Hz. Then they were filtered
+to remove noise.
+Similarly, the acceleration signal was then separated into body and gravity
+acceleration signals using another filter.
+Subsequently, the body linear acceleration and angular velocity were derived in time
+to obtain Jerk signals . The magnitude of these
+three-dimensional signals were calculated using the Euclidean norm . 
+Finally a Fast Fourier Transform (FFT)  was applied to some of these
+time domain signals to obtain frequency domain  signals.
 
-The sensor signals (accelerometer and gyroscope) were pre-processed by applying noise filters and then sampled in fixed-width sliding windows of 2.56 sec and 50% overlap (128 readings/window). The sensor acceleration signal, which has gravitational and body motion components, was separated using a Butterworth low-pass filter into body acceleration and gravity. The gravitational force is assumed to have only low frequency components, therefore a filter with 0.3 Hz cutoff frequency was used. From each window, a vector of 561 features was obtained by calculating variables from the time and frequency domain. See 'features_info.txt' for more details. 
+The signals were sampled in fixed-width sliding windows of 2.56 sec and 50% 
+overlap (128 readings/window at 50 Hz).
+From each window, a vector of features was obtained by calculating variables
+from the time and frequency domain.
 
-This dataset is an updated version of the UCI Human Activity Recognition Using smartphones Dataset that can be found at: [Web Link] 
-This version provides the original raw inertial signals from the smartphone sensors, instead of the ones pre-processed into windows which were provided in version 1. This change was done in order to be able to make online tests with the raw data. Moreover, the activity labels were updated in order to include postural transitions that were not part of the previous version of the dataset. 
+The set of variables that were estimated from these signals are: 
 
-##Creating the tidy datafile
+*  mean(): Mean value
+*  std(): Standard deviation
+*  mad(): Median absolute deviation 
+*  max(): Largest value in array
+*  min(): Smallest value in array
+*  sma(): Signal magnitude area
+*  energy(): Energy measure. Sum of the squares divided by the number of values. 
+*  iqr(): Interquartile range 
+*  entropy(): Signal entropy
+*  arCoeff(): Autoregression coefficients with Burg order equal to 4
+*  correlation(): Correlation coefficient between two signals
+*  maxInds(): Index of the frequency component with largest magnitude
+*  meanFreq(): Weighted average of the frequency components to obtain a mean frequency
+*  skewness(): Skewness of the frequency domain signal 
+*  kurtosis(): Kurtosis of the frequency domain signal 
+*  bandsEnergy(): Energy of a frequency interval within the 64 bins of the FFT
+   of each window.
+*  angle(): Angle between some vectors.
 
-###Guide to create the tidy data file
-1.  Download the data https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip
-2.  Unzip the data into folder called data.
-3.  import the run_analysis.R file and run run_analysis method
+No unit of measures is reported as all features were normalized and bounded
+within [-1,1].
+
+Data transformation
+-------------------
+
+The raw data sets are processed with run_analisys.R script to create a tidy data
+set.
+
+### Merge training and test sets
+
+Test and training data (X_train.txt, X_test.txt), subject ids (subject_train.txt,
+subject_test.txt) and activity ids (y_train.txt, y_test.txt) are merged to obtain
+a single data set. Variables are labelled with the names assigned by original
+collectors (features.txt).
+
+### Extract mean and standard deviation variables
+
+From the merged data set is extracted and intermediate data set with only the
+values of estimated mean (variables with labels that contain "mean") and standard
+deviation (variables with labels that contain "std").
+
+### Use descriptive activity names
+
+A new column is added to intermediate data set with the activity description.
+Activity id column is used to look up descriptions in activity_labels.txt.
+
+### Label variables appropriately
+
+Labels given from the original collectors were changed:
+* to obtain valid R names without parentheses, dashes and commas
+* to obtain more descriptive labels
+
+### Create a tidy data set
+
+From the intermediate data set is created a final tidy data set where numeric
+variables are averaged for each activity and each subject.
+
+The tidy data set contains 10299 observations with 81 variables divided in:
+
+*  an activity label (__Activity__): WALKING, WALKING_UPSTAIRS, WALKING_DOWNSTAIRS, SITTING, STANDING, LAYING
+*  an identifier of the subject who carried out the experiment (__Subject__):
+   1, 3, 5, 6, 7, 8, 11, 14, 15, 16, 17, 19, 21, 22, 23, 25, 26, 27, 28, 29, 30
+*  a 79-feature vector with time and frequency domain signal variables (numeric)
+
+The following table relates the 17 signals to the names used as prefix for the
+variables names present in the data set. ".XYZ" denotes three variables, one for each axis.
+
+Name                                  | Time domain                                 | Frequency domain
+------------------------------------- | ------------------------------------------- | ------------------------------------------------
+Body Acceleration                     | TimeDomain.BodyAcceleration.XYZ             | FrequencyDomain.BodyAcceleration.XYZ
+Gravity Acceleration                  | TimeDomain.GravityAcceleration.XYZ          |
+Body Acceleration Jerk                | TimeDomain.BodyAccelerationJerk.XYZ         | FrequencyDomain.BodyAccelerationJerk.XYZ
+Body Angular Speed                    | TimeDomain.BodyAngularSpeed.XYZ             | FrequencyDomain.BodyAngularSpeed.XYZ
+Body Angular Acceleration             | TimeDomain.BodyAngularAcceleration.XYZ      |
+Body Acceleration Magnitude           | TimeDomain.BodyAccelerationMagnitude        | FrequencyDomain.BodyAccelerationMagnitude
+Gravity Acceleration Magnitude        | TimeDomain.GravityAccelerationMagnitude     |
+Body Acceleration Jerk Magnitude      | TimeDomain.BodyAccelerationJerkMagnitude    | FrequencyDomain.BodyAccelerationJerkMagnitude
+Body Angular Speed Magnitude          | TimeDomain.BodyAngularSpeedMagnitude        | FrequencyDomain.BodyAngularSpeedMagnitude
+Body Angular Acceleration Magnitude   | TimeDomain.BodyAngularAccelerationMagnitude | FrequencyDomain.BodyAngularAccelerationMagnitude
+
+For variables derived from mean and standard deviation estimation, the previous labels
+are augmented with the terms "Mean" or "StandardDeviation".
+
+The data set is written to the file sensor_avg_by_act_sub.txt.
